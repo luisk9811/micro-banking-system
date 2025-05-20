@@ -1,0 +1,7 @@
+rootProject.name = 'micro-banking-system'
+
+include 'products-service'
+include 'api-gateway'
+include 'cart-service'
+include 'notifications-service'
+include 'auth-service'
