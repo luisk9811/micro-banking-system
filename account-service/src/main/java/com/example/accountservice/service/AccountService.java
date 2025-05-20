@@ -18,8 +18,7 @@ public class AccountService {
     }
 
     public Mono<Account> getById(Long accountId) {
-        return bankRepository
-                .findById(accountId)
+        return bankRepository.findById(accountId)
                 .switchIfEmpty(Mono.error(new RuntimeException("Account not found")));
     }
 
@@ -30,8 +29,7 @@ public class AccountService {
     }
 
     public Mono<Account> update(Account account) {
-        return bankRepository.findById(account.getId())
-                .switchIfEmpty(Mono.error(new RuntimeException("Account not found")))
+        return getById(account.getId())
                 .flatMap(existingAccount ->
                         getBankClient.getBank(account.getBankId())
                                 .flatMap(bank -> {

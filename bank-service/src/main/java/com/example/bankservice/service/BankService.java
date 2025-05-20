@@ -17,8 +17,7 @@ public class BankService {
     }
 
     public Mono<Bank> getById(Long productId) {
-        return bankRepository
-                .findById(productId)
+        return bankRepository.findById(productId)
                 .switchIfEmpty(Mono.error(new RuntimeException("Bank not found")));
     }
 
@@ -28,8 +27,7 @@ public class BankService {
     }
 
     public Mono<Bank> update(Bank bank) {
-        return bankRepository.findById(bank.getId())
-                .switchIfEmpty(Mono.error(new RuntimeException("Bank not found")))
+        return getById(bank.getId())
                 .flatMap(existingBank -> {
                     existingBank.setName(bank.getName());
                     existingBank.setDescription(bank.getDescription());
