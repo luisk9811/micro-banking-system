@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS products (
 
 INSERT INTO products(name, description, stock) VALUES ('Mouse ergonomico', 'x', 10);
 INSERT INTO products(name, description, stock)
-VALUES ('Teclado mecánico', 'Teclado gaming con switches Cherry MX Red', 15);
+VALUES ('Teclado mecánico', 'Teclado gaming con switches Cherry MX Red', 6);
 INSERT INTO products(name, description, stock)
 VALUES ('Monitor 27"', 'Monitor LED IPS 2K con 144Hz', 8);
 INSERT INTO products(name, description, stock)
