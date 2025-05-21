@@ -2,6 +2,7 @@ package com.example.transactionservice.service;
 
 import com.example.transactionservice.dto.AccountDTO;
 import com.example.transactionservice.dto.TransferDTO;
+import com.example.transactionservice.event.TransferEventPublisher;
 import com.example.transactionservice.model.Transaction;
 import com.example.transactionservice.repository.ITransactionRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 public class TransactionService {
     private final ITransactionRepository transactionRepository;
     private final AccountClient accountClient;
+    private final TransferEventPublisher transferEventPublisher;
 
     public Flux<Transaction> getAll() {
         return transactionRepository.findAll();
@@ -42,30 +44,18 @@ public class TransactionService {
                     if (source.getBankId().equals(destination.getBankId())) {
                         destination.setBalance(destination.getBalance().add(amount));
                         Transaction deposit = new Transaction(null, "DEPOSITO", destination.getId(), amount, "Transfer from " + source.getId(), LocalDateTime.now());
-
                         return Mono.when(
                                 accountClient.updateAccount(source),
-                                accountClient.updateAccount(destination),
                                 transactionRepository.save(withdrawal),
+                                accountClient.updateAccount(destination),
                                 transactionRepository.save(deposit)
                         ).then();
                     } else {
-//                        // Interbancaria: solo retiro y enviar evento
-//                        DepositEvent depositEvent = new DepositEvent(destination.getId(), amount, "Interbank transfer");
-//
-//                        return Mono.when(
-//                                updateAccount(source),
-//                                transactionRepository.save(withdrawal),
-//                                eventPublisher.publish(depositEvent) // lo envías a la cola
-//                        ).then();
-                        destination.setBalance(destination.getBalance().add(amount));
-                        Transaction deposit = new Transaction(null, "DEPOSITO", destination.getId(), amount, "Transfer from " + source.getId(), LocalDateTime.now());
-
+                        Transaction deposit = new Transaction(null, "DEPOSITO", destination.getId(), amount, "Interbank transfer from " + source.getId(), LocalDateTime.now());
                         return Mono.when(
                                 accountClient.updateAccount(source),
-                                accountClient.updateAccount(destination),
                                 transactionRepository.save(withdrawal),
-                                transactionRepository.save(deposit)
+                                Mono.fromRunnable(() -> transferEventPublisher.publishPurchaseMadeEvent(deposit))
                         ).then();
                     }
                 });
