@@ -24,6 +24,11 @@ public class TransactionService {
         return transactionRepository.findAll();
     }
 
+    public Mono<Transaction> create(Transaction transaction) {
+        transaction.setId(null);
+        return transactionRepository.save(transaction);
+    }
+
     public Mono<Void> makeTransaction(TransferDTO transfer) {
 
         BigDecimal amount = transfer.getAmount();

@@ -24,6 +24,11 @@ public class TransactionController {
     return transactionService.getAll();
   }
 
+  @PostMapping("/create")
+  public Mono<Transaction> create(@RequestBody Transaction transaction) {
+    return transactionService.create(transaction);
+  }
+
   @PostMapping
   public Mono<TransferResponseDTO> transfer(@RequestBody TransferDTO transfer) {
     return transactionService.makeTransaction(transfer)

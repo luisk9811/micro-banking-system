@@ -14,7 +14,7 @@ public class TransactionEventListener {
 
   @RabbitListener(queues = "${rabbit.queue.name}")
   public void listen(Transaction transaction) {
-    transferService.saveTransaction(transaction)
+    transferService.saveTransfer(transaction)
             .doOnSuccess(unused -> System.out.println("Transaction processed successfully"))
             .doOnError(error -> System.err.println("Error processing transaction: " + error.getMessage()))
             .subscribe();

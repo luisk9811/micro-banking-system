@@ -1,6 +1,7 @@
 package com.example.transferservice.service;
 
 import com.example.transferservice.dto.AccountDTO;
+import com.example.transferservice.model.Transaction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
@@ -10,12 +11,14 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class AccountClient {
+public class RestWebClient {
 
   private final WebClient.Builder webClientBuilder;
 
   @Value("${account.service.url}")
   private String accountsServiceUrl;
+  @Value("${transactions.service.url}")
+  private String transactionsServiceUrl;
 
   public Mono<AccountDTO> getAccount(Long accountId) {
     return webClientBuilder
@@ -23,7 +26,7 @@ public class AccountClient {
       .get()
       .uri(accountsServiceUrl + "/api/accounts/" + accountId)
       .retrieve()
-      .onStatus(HttpStatusCode::isError, response -> Mono.error(new RuntimeException("Account does not exist 1")))
+      .onStatus(HttpStatusCode::isError, response -> Mono.error(new RuntimeException("Account does not exist")))
       .bodyToMono(AccountDTO.class);
   }
 
@@ -34,7 +37,18 @@ public class AccountClient {
             .uri(accountsServiceUrl + "/api/accounts")
             .bodyValue(account)
             .retrieve()
-            .onStatus(HttpStatusCode::isError, response -> Mono.error(new RuntimeException("Account does not exist 2")))
+            .onStatus(HttpStatusCode::isError, response -> Mono.error(new RuntimeException("Account does not exist")))
             .bodyToMono(AccountDTO.class);
+  }
+
+  public Mono<Transaction> saveTransaction(Transaction transaction) {
+    return webClientBuilder
+            .build()
+            .post()
+            .uri(transactionsServiceUrl + "/api/transfer/create")
+            .bodyValue(transaction)
+            .retrieve()
+            .onStatus(HttpStatusCode::isError, response -> Mono.error(new RuntimeException("Unsaved transaction")))
+            .bodyToMono(Transaction.class);
   }
 }
