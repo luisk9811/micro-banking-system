@@ -5,6 +5,7 @@ import com.example.authservice.dto.AuthResponse;
 import com.example.authservice.dto.RegisterRequest;
 import com.example.authservice.service.JwtService;
 import com.example.authservice.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
@@ -17,28 +18,18 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final JwtService jwtService;
     private final ReactiveAuthenticationManager authManager;
     private final UserService userService;
 
-    public AuthController(JwtService jwtService, ReactiveAuthenticationManager authManager, UserService userService) {
-        this.jwtService = jwtService;
-        this.authManager = authManager;
-      this.userService = userService;
-    }
-
     @PostMapping("/login")
     public Mono<ResponseEntity<AuthResponse>> login(@RequestBody AuthRequest request) {
-        UsernamePasswordAuthenticationToken authToken =
-            new UsernamePasswordAuthenticationToken(request.username(), request.password());
-
+        var authToken = new UsernamePasswordAuthenticationToken(request.username(), request.password());
         return authManager.authenticate(authToken)
-            .map(auth -> {
-                String token = jwtService.generateToken(auth);
-                return ResponseEntity.ok(new AuthResponse(token));
-            })
+            .map(auth -> ResponseEntity.ok(new AuthResponse(jwtService.generateToken(auth))))
             .switchIfEmpty(Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()));
     }
 
