@@ -1,5 +1,6 @@
 package com.example.apigateway.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.http.HttpHeaders;
@@ -10,19 +11,15 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @Component
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter implements GatewayFilter {
 
     private final JwtService jwtService;
-
-    public JwtAuthenticationFilter(JwtService jwtService) {
-        this.jwtService = jwtService;
-    }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
 
-        // Comprobar si el header Authorization está presente
         if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
             return unauthorized(exchange);
         }

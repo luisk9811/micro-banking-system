@@ -15,7 +15,7 @@ public class SecurityConfig {
         http.csrf(ServerHttpSecurity.CsrfSpec::disable)
             .authorizeExchange(exchanges -> exchanges
                 .pathMatchers("/api/auth/**").permitAll()
-                .anyExchange().permitAll()); // La validación se hace con el filtro JWT
+                .anyExchange().permitAll());
         return http.build();
     }
 }
