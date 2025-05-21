@@ -1,5 +1,6 @@
 package com.example.accountservice.controller;
 
+import com.example.accountservice.dto.TransactionDTO;
 import com.example.accountservice.model.Account;
 import com.example.accountservice.service.AccountService;
 import lombok.RequiredArgsConstructor;
@@ -39,4 +40,8 @@ public class AccountController {
     return accountService.update(account);
   }
 
+  @GetMapping("/movements/{accountId}")
+  public Flux<TransactionDTO> getMovements(@PathVariable Long accountId) {
+    return accountService.getMovements(accountId);
+  }
 }

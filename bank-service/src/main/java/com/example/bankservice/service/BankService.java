@@ -16,8 +16,8 @@ public class BankService {
         return bankRepository.findAll();
     }
 
-    public Mono<Bank> getById(Long productId) {
-        return bankRepository.findById(productId)
+    public Mono<Bank> getById(Long bankId) {
+        return bankRepository.findById(bankId)
                 .switchIfEmpty(Mono.error(new RuntimeException("Bank not found")));
     }
 

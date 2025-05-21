@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option java_package = "com.example.accountservice.grpc";
+option java_multiple_files = true;
+option java_outer_classname = "TransactionProto";
+
+service TransactionService {
+  rpc GetTransactionsByAccountId (AccountRequest) returns (TransactionsResponse);
+}
+
+message AccountRequest {
+  int64 accountId = 1;
+}
+
+message Transaction {
+  int64 id = 1;
+  string type = 2;
+  int64 accountId = 3;
+  double amount = 4;
+  string description = 5;
+  string timestamp = 6;
+}
+
+message TransactionsResponse {
+  repeated Transaction transactions = 1;
+}
