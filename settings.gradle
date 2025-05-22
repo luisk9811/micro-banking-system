@@ -1,11 +1,8 @@
 rootProject.name = 'micro-banking-system'
 
-include 'products-service'
+include 'api-gateway'
+include 'auth-service'
 include 'bank-service'
 include 'account-service'
 include 'transaction-service'
 include 'transfer-service'
-include 'api-gateway'
-include 'cart-service'
-include 'notifications-service'
-include 'auth-service'

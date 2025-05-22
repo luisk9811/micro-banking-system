@@ -15,23 +15,23 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class AccountService {
-    private final IAccountRepository bankRepository;
+    private final IAccountRepository accountRepository;
     private final GetBankClient getBankClient;
     private final TransactionConsumer transactionConsumer;
 
     public Flux<Account> getAll() {
-        return bankRepository.findAll();
+        return accountRepository.findAll();
     }
 
     public Mono<Account> getById(Long accountId) {
-        return bankRepository.findById(accountId)
+        return accountRepository.findById(accountId)
                 .switchIfEmpty(Mono.error(new RuntimeException("Account not found")));
     }
 
     public Mono<Account> create(Account account) {
         account.setId(null);
         return getBankClient.getBank(account.getBankId())
-                .flatMap(bank -> bankRepository.save(account));
+                .flatMap(bank -> accountRepository.save(account));
     }
 
     public Mono<Account> update(Account account) {
@@ -44,7 +44,7 @@ public class AccountService {
                                     existingAccount.setAccountType(account.getAccountType());
                                     existingAccount.setBalance(account.getBalance());
                                     existingAccount.setStatus(account.getStatus());
-                                    return bankRepository.save(existingAccount);
+                                    return accountRepository.save(existingAccount);
                                 }));
     }
 
