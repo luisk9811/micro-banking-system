@@ -5,16 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table("users")
+@Document("users")
 public class User {
   @Id
-  private Long id;
+  private String id;
   private String username;
   private String password;
   private String role;

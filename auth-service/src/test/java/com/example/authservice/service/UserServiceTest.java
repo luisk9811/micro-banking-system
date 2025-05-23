@@ -25,7 +25,7 @@ class UserServiceTest {
     void register_ShouldSaveUser_WhenUsernameDoesNotExist() {
         RegisterRequest request = new RegisterRequest("luisk", "secret123", null);
         User savedUser = new User(
-                1L,
+                "1",
                 "luisk",
                 "encodedPassword",
                 "ROLE_ADMIN"
@@ -50,7 +50,7 @@ class UserServiceTest {
     @Test
     void register_ShouldReturnError_WhenUserAlreadyExists() {
         RegisterRequest request = new RegisterRequest("luisk", "secret123", null);
-        User existingUser = new User(1L, "luisk", null, null);
+        User existingUser = new User("1", "luisk", null, null);
 
         Mockito.when(repository.findByUsername(Mockito.anyString()))
                 .thenReturn(Mono.just(existingUser));

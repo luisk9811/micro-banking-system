@@ -20,7 +20,7 @@ class UserDetailServiceTest {
     @Test
     void findByUsername_ShouldReturnUserDetails_WhenUserExists() {
         User user = new User(
-                1L,
+                "1",
                 "luisk",
                 "encodedPassword",
                 "ROLE_ADMIN"
