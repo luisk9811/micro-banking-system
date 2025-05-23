@@ -22,12 +22,12 @@ public class BankService {
     }
 
     public Mono<Bank> create(Bank bank) {
-        bank.setId(null);
+        bank.setBankId(null);
         return bankRepository.save(bank);
     }
 
     public Mono<Bank> update(Bank bank) {
-        return getById(bank.getId())
+        return getById(bank.getBankId())
                 .flatMap(existingBank -> {
                     existingBank.setName(bank.getName());
                     existingBank.setDescription(bank.getDescription());

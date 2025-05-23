@@ -14,7 +14,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table("banks")
 public class Bank {
   @Id
-  private Long id;
+  private Long bankId;
   private String name;
   private String description;
 }

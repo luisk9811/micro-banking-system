@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BankDTO {
-  private Long id;
+  private Long bankId;
   private String name;
   private String description;
 }
