@@ -1,8 +1,5 @@
-package com.example.accountservice.gprc;
+package com.example.accountservice.grpc;
 
-import com.example.accountservice.grpc.AccountRequest;
-import com.example.accountservice.grpc.Transaction;
-import com.example.accountservice.grpc.TransactionServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.springframework.stereotype.Component;

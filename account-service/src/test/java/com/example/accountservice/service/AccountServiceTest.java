@@ -1,7 +1,7 @@
 package com.example.accountservice.service;
 
 import com.example.accountservice.dto.BankDTO;
-import com.example.accountservice.gprc.TransactionConsumer;
+import com.example.accountservice.grpc.TransactionConsumer;
 import com.example.accountservice.grpc.Transaction;
 import com.example.accountservice.model.Account;
 import com.example.accountservice.repository.IAccountRepository;
