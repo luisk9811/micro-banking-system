@@ -7,5 +7,5 @@ import reactor.core.publisher.Flux;
 
 @Repository
 public interface ITransactionRepository extends ReactiveCrudRepository<Transaction, Long> {
-    Flux<Transaction> findByAccountId(Long accountId);
+    Flux<Transaction> findByAccountNumber(Long accountId);
 }

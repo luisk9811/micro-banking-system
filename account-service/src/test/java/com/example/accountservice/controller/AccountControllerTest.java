@@ -18,11 +18,12 @@ class AccountControllerTest {
     private final AccountService accountService;
     private final WebTestClient webTestClient;
 
-    private static final Account ACCOUNT = new Account(1L, "ACC001", 5L, "AHORROS", new BigDecimal("100000.00"), "active");
+    private static final Account ACCOUNT = new Account(1L, "AHORROS", new BigDecimal("100000.00"), "active", 5L);
     private static final TransactionDTO TRANSACTION_DTO = new TransactionDTO(
             1L,
             "DEPOSITO",
             4L,
+            1L,
             new BigDecimal("100000.00"),
             "Test deposit",
             LocalDateTime.of(2024, 5, 21, 10, 0)
@@ -47,7 +48,7 @@ class AccountControllerTest {
                 .hasSize(1)
                 .value(accounts -> {
                     Assertions.assertNotNull(accounts);
-                    Assertions.assertEquals("ACC001", accounts.get(0).getAccountNumber());
+                    Assertions.assertEquals(1L, accounts.get(0).getAccountNumber());
                     Assertions.assertEquals(new BigDecimal("100000.00"), accounts.get(0).getBalance());
                 });
 
@@ -67,7 +68,7 @@ class AccountControllerTest {
                 .expectBody(Account.class)
                 .value(account -> {
                     Assertions.assertNotNull(account);
-                    Assertions.assertEquals("ACC001", account.getAccountNumber());
+                    Assertions.assertEquals(1L, account.getAccountNumber());
                     Assertions.assertEquals(new BigDecimal("100000.00"), account.getBalance());
                 });
 
@@ -88,7 +89,7 @@ class AccountControllerTest {
                 .expectBody(Account.class)
                 .value(account -> {
                     Assertions.assertNotNull(account);
-                    Assertions.assertEquals("ACC001", account.getAccountNumber());
+                    Assertions.assertEquals(1L, account.getAccountNumber());
                     Assertions.assertEquals(new BigDecimal("100000.00"), account.getBalance());
                 });
 
@@ -109,7 +110,7 @@ class AccountControllerTest {
                 .expectBody(Account.class)
                 .value(account -> {
                     Assertions.assertNotNull(account);
-                    Assertions.assertEquals("ACC001", account.getAccountNumber());
+                    Assertions.assertEquals(1L, account.getAccountNumber());
                     Assertions.assertEquals(new BigDecimal("100000.00"), account.getBalance());
                 });
 

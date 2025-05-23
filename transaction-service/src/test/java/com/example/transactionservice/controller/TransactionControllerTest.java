@@ -23,6 +23,7 @@ class TransactionControllerTest {
             1L,
             "DEPOSITO",
             4L,
+            1L,
             new BigDecimal("100000.00"),
             "Test deposit",
             LocalDateTime.of(2024, 5, 21, 10, 0)

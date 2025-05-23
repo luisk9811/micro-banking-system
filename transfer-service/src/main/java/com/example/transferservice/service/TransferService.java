@@ -11,7 +11,7 @@ public class TransferService {
     private final RestWebClient restWebClient;
 
     public Mono<Void> saveTransfer(Transaction deposit) {
-        return restWebClient.getAccount(deposit.getAccountId())
+        return restWebClient.getAccount(deposit.getAccountNumber())
                 .flatMap(destination -> {
                     destination.setBalance(destination.getBalance().add(deposit.getAmount()));
                     return Mono.when(

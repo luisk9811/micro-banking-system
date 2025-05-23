@@ -20,11 +20,11 @@ public class RestWebClient {
   @Value("${transactions.service.url}")
   private String transactionsServiceUrl;
 
-  public Mono<AccountDTO> getAccount(Long accountId) {
+  public Mono<AccountDTO> getAccount(Long accountNumber) {
     return webClientBuilder
       .build()
       .get()
-      .uri(accountsServiceUrl + "/api/accounts/" + accountId)
+      .uri(accountsServiceUrl + "/api/accounts/" + accountNumber)
       .retrieve()
       .onStatus(HttpStatusCode::isError, response -> Mono.error(new RuntimeException("Account does not exist")))
       .bodyToMono(AccountDTO.class);

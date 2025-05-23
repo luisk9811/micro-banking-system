@@ -14,14 +14,15 @@ public class TransactionProvider extends TransactionServiceGrpc.TransactionServi
     private final ITransactionRepository transactionRepository;
 
     @Override
-    public void getTransactionsByAccountId(AccountRequest request, StreamObserver<TransactionsResponse> responseObserver) {
+    public void getTransactionsByAccountNumber(AccountRequest request, StreamObserver<TransactionsResponse> responseObserver) {
         TransactionsResponse response = TransactionsResponse.newBuilder()
                 .addAllTransactions(
-                        transactionRepository.findByAccountId(request.getAccountId())
+                        transactionRepository.findByAccountNumber(request.getAccountNumber())
                                 .map(transaction -> Transaction.newBuilder()
                                         .setId(transaction.getId())
                                         .setType(transaction.getType())
-                                        .setAccountId(transaction.getAccountId())
+                                        .setAccountNumber(transaction.getAccountNumber())
+                                        .setBankId(transaction.getBankId())
                                         .setAmount(transaction.getAmount().doubleValue())
                                         .setDescription(transaction.getDescription())
                                         .setTimestamp(transaction.getTimestamp().toString())

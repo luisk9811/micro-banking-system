@@ -15,10 +15,10 @@ public class TransactionConsumer {
     private final ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build();
     private final TransactionServiceGrpc.TransactionServiceBlockingStub blockingStub = TransactionServiceGrpc.newBlockingStub(channel);
 
-    public List<Transaction> getTransactions(Long accountId) {
-        return blockingStub.getTransactionsByAccountId(
+    public List<Transaction> getTransactions(Long accountNumber) {
+        return blockingStub.getTransactionsByAccountNumber(
                 AccountRequest.newBuilder()
-                        .setAccountId(accountId)
+                        .setAccountNumber(accountNumber)
                         .build())
                 .getTransactionsList();
     }

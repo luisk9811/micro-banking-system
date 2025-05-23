@@ -1,6 +1,7 @@
 package com.example.accountservice.controller;
 
-import com.example.accountservice.dto.TransactionDTO;
+import com.example.accountservice.dto.AccountStrDTO;
+import com.example.accountservice.dto.TransactionStrDTO;
 import com.example.accountservice.model.Account;
 import com.example.accountservice.service.AccountService;
 import lombok.RequiredArgsConstructor;
@@ -21,27 +22,32 @@ public class AccountController {
   private final AccountService accountService;
 
   @GetMapping
-  public Flux<Account> getAll() {
-    return accountService.getAll();
+  public Flux<AccountStrDTO> getAll() {
+    return accountService.getAll()
+            .map(AccountStrDTO::new);
   }
 
-  @GetMapping("/{accountId}")
-  public Mono<Account> getById(@PathVariable Long accountId) {
-    return accountService.getById(accountId);
+  @GetMapping("/{accountNumber}")
+  public Mono<AccountStrDTO> getById(@PathVariable Long accountNumber) {
+    return accountService.getById(accountNumber)
+            .map(AccountStrDTO::new);
   }
 
   @PostMapping
-  public Mono<Account> create(@RequestBody Account account) {
-    return accountService.create(account);
+  public Mono<AccountStrDTO> create(@RequestBody Account account) {
+    return accountService.create(account)
+            .map(AccountStrDTO::new);
   }
 
   @PutMapping
-  public Mono<Account> update(@RequestBody Account account) {
-    return accountService.update(account);
+  public Mono<AccountStrDTO> update(@RequestBody Account account) {
+    return accountService.update(account)
+            .map(AccountStrDTO::new);
   }
 
-  @GetMapping("/movements/{accountId}")
-  public Flux<TransactionDTO> getMovements(@PathVariable Long accountId) {
-    return accountService.getMovements(accountId);
+  @GetMapping("/movements/{accountNumber}")
+  public Flux<TransactionStrDTO> getMovements(@PathVariable Long accountNumber) {
+    return accountService.getMovements(accountNumber)
+            .map(TransactionStrDTO::new);
   }
 }

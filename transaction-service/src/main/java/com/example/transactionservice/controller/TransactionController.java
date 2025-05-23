@@ -1,5 +1,6 @@
 package com.example.transactionservice.controller;
 
+import com.example.transactionservice.dto.TransactionStrDTO;
 import com.example.transactionservice.dto.TransferDTO;
 import com.example.transactionservice.dto.TransferResponseDTO;
 import com.example.transactionservice.model.Transaction;
@@ -20,8 +21,9 @@ public class TransactionController {
   private final TransactionService transactionService;
 
   @GetMapping
-  public Flux<Transaction> getAll() {
-    return transactionService.getAll();
+  public Flux<TransactionStrDTO> getAll() {
+    return transactionService.getAll()
+            .map(TransactionStrDTO::new);
   }
 
   @PostMapping("/create")

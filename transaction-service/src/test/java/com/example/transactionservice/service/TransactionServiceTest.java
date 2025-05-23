@@ -25,6 +25,7 @@ class TransactionServiceTest {
             1L,
             "DEPOSITO",
             4L,
+            1L,
             new BigDecimal("100000.00"),
             "Test deposit",
             LocalDateTime.of(2024, 5, 21, 10, 0)
@@ -66,13 +67,13 @@ class TransactionServiceTest {
 
     @Test
     void makeTransaction_ShouldTransferBetweenSameBankAccounts() {
-        AccountDTO source = new AccountDTO(1L, "ACC001", 10L, "AHORROS", new BigDecimal("200000.00"), "active");
-        AccountDTO destination = new AccountDTO(2L, "ACC002", 10L, "AHORROS", new BigDecimal("50000.00"), "active");
-        TransferDTO transfer = new TransferDTO(source.getId(), destination.getId(), new BigDecimal("100000.00"));
+        AccountDTO source = new AccountDTO(1L, "AHORROS", new BigDecimal("200000.00"), "active", 10L);
+        AccountDTO destination = new AccountDTO(2L, "AHORROS", new BigDecimal("50000.00"), "active", 10L);
+        TransferDTO transfer = new TransferDTO(source.getAccountNumber(), destination.getAccountNumber(), new BigDecimal("100000.00"));
 
-        Mockito.when(accountClient.getAccount(source.getId()))
+        Mockito.when(accountClient.getAccount(source.getAccountNumber()))
                 .thenReturn(Mono.just(source));
-        Mockito.when(accountClient.getAccount(destination.getId()))
+        Mockito.when(accountClient.getAccount(destination.getAccountNumber()))
                 .thenReturn(Mono.just(destination));
         Mockito.when(accountClient.updateAccount(Mockito.any(AccountDTO.class)))
                 .thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
@@ -82,21 +83,21 @@ class TransactionServiceTest {
         StepVerifier.create(transactionService.makeTransaction(transfer))
                 .verifyComplete();
 
-        Mockito.verify(accountClient).getAccount(source.getId());
-        Mockito.verify(accountClient).getAccount(destination.getId());
+        Mockito.verify(accountClient).getAccount(source.getAccountNumber());
+        Mockito.verify(accountClient).getAccount(destination.getAccountNumber());
         Mockito.verify(accountClient, Mockito.times(2)).updateAccount(Mockito.any(AccountDTO.class));
         Mockito.verify(transactionRepository, Mockito.times(2)).save(Mockito.any(Transaction.class));
     }
 
     @Test
     void makeTransaction_ShouldTransferBetweenDifferentBanks() {
-        AccountDTO source = new AccountDTO(1L, "ACC001", 10L, "AHORROS", new BigDecimal("200000.00"), "active");
-        AccountDTO destination = new AccountDTO(2L, "ACC002", 99L, "AHORROS", new BigDecimal("50000.00"), "active");
-        TransferDTO transfer = new TransferDTO(source.getId(), destination.getId(), new BigDecimal("100000.00"));
+        AccountDTO source = new AccountDTO(1L, "AHORROS", new BigDecimal("200000.00"), "active", 10L);
+        AccountDTO destination = new AccountDTO(2L, "AHORROS", new BigDecimal("50000.00"), "active", 11L);
+        TransferDTO transfer = new TransferDTO(source.getAccountNumber(), destination.getAccountNumber(), new BigDecimal("100000.00"));
 
-        Mockito.when(accountClient.getAccount(source.getId()))
+        Mockito.when(accountClient.getAccount(source.getAccountNumber()))
                 .thenReturn(Mono.just(source));
-        Mockito.when(accountClient.getAccount(destination.getId()))
+        Mockito.when(accountClient.getAccount(destination.getAccountNumber()))
                 .thenReturn(Mono.just(destination));
         Mockito.when(accountClient.updateAccount(Mockito.any(AccountDTO.class)))
                 .thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
@@ -106,8 +107,8 @@ class TransactionServiceTest {
         StepVerifier.create(transactionService.makeTransaction(transfer))
                 .verifyComplete();
 
-        Mockito.verify(accountClient).getAccount(source.getId());
-        Mockito.verify(accountClient).getAccount(destination.getId());
+        Mockito.verify(accountClient).getAccount(source.getAccountNumber());
+        Mockito.verify(accountClient).getAccount(destination.getAccountNumber());
         Mockito.verify(accountClient).updateAccount(source);
         Mockito.verify(transactionRepository).save(Mockito.argThat(t -> t.getType().equals("RETIRO")));
         Mockito.verify(transferEventPublisher).publishPurchaseMadeEvent(Mockito.any(Transaction.class));
@@ -116,21 +117,21 @@ class TransactionServiceTest {
 
     @Test
     void makeTransaction_ShouldReturnErrorWhenInsufficientFunds() {
-        AccountDTO source = new AccountDTO(1L, "ACC001", 10L, "AHORROS", new BigDecimal("50000.00"), "active");
-        AccountDTO destination = new AccountDTO(2L, "ACC002", 10L, "AHORROS", new BigDecimal("50000.00"), "active");
-        TransferDTO transfer = new TransferDTO(source.getId(), destination.getId(), new BigDecimal("100000.00"));
+        AccountDTO source = new AccountDTO(1L, "AHORROS", new BigDecimal("200000.00"), "active", 10L);
+        AccountDTO destination = new AccountDTO(2L, "AHORROS", new BigDecimal("50000.00"), "active", 10L);
+        TransferDTO transfer = new TransferDTO(source.getAccountNumber(), destination.getAccountNumber(), new BigDecimal("300000.00"));
 
-        Mockito.when(accountClient.getAccount(source.getId()))
+        Mockito.when(accountClient.getAccount(source.getAccountNumber()))
                 .thenReturn(Mono.just(source));
-        Mockito.when(accountClient.getAccount(destination.getId()))
+        Mockito.when(accountClient.getAccount(destination.getAccountNumber()))
                 .thenReturn(Mono.just(destination));
 
         StepVerifier.create(transactionService.makeTransaction(transfer))
                 .expectErrorMatches(error -> error instanceof RuntimeException && error.getMessage().equals("Insufficient funds"))
                 .verify();
 
-        Mockito.verify(accountClient).getAccount(source.getId());
-        Mockito.verify(accountClient).getAccount(destination.getId());
+        Mockito.verify(accountClient).getAccount(source.getAccountNumber());
+        Mockito.verify(accountClient).getAccount(destination.getAccountNumber());
         Mockito.verify(transactionRepository, Mockito.never()).save(Mockito.any(Transaction.class));
         Mockito.verify(transferEventPublisher, Mockito.never()).publishPurchaseMadeEvent(Mockito.any());
     }

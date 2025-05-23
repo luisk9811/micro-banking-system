@@ -44,11 +44,17 @@ public class TransactionService {
                     }
 
                     source.setBalance(source.getBalance().subtract(amount));
-                    Transaction withdrawal = new Transaction(null, "RETIRO", source.getId(), amount, "Transfer to " + destination.getId(), LocalDateTime.now());
+
+                    Transaction withdrawal = new Transaction(null, "RETIRO", source.getAccountNumber(), source.getBankId(), amount, null, LocalDateTime.now());
+                    Transaction deposit = new Transaction(null, "DEPOSITO", destination.getAccountNumber(), destination.getBankId(), amount, null, LocalDateTime.now());
 
                     if (source.getBankId().equals(destination.getBankId())) {
+
                         destination.setBalance(destination.getBalance().add(amount));
-                        Transaction deposit = new Transaction(null, "DEPOSITO", destination.getId(), amount, "Transfer from " + source.getId(), LocalDateTime.now());
+
+                        withdrawal.setDescription("Transfer to account number " + String.format("%011d", destination.getAccountNumber()));
+                        deposit.setDescription("Transfer from account number " + String.format("%011d", source.getAccountNumber()));
+
                         return Mono.when(
                                 accountClient.updateAccount(source),
                                 transactionRepository.save(withdrawal),
@@ -56,7 +62,10 @@ public class TransactionService {
                                 transactionRepository.save(deposit)
                         ).then();
                     } else {
-                        Transaction deposit = new Transaction(null, "DEPOSITO", destination.getId(), amount, "Interbank transfer from " + source.getId(), LocalDateTime.now());
+
+                        withdrawal.setDescription("Interbank transfer to account number " + String.format("%011d", destination.getAccountNumber()));
+                        deposit.setDescription("Interbank transfer from account number " + String.format("%011d", source.getAccountNumber()));
+
                         return Mono.when(
                                 accountClient.updateAccount(source),
                                 transactionRepository.save(withdrawal),

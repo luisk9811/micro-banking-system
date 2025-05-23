@@ -21,7 +21,7 @@ class AccountServiceTest {
     private final TransactionConsumer transactionConsumer;
     private final AccountService accountService;
 
-    private static final Account ACCOUNT = new Account(1L, "ACC001", 5L, "AHORROS", new BigDecimal("100000.00"), "active");
+    private static final Account ACCOUNT = new Account(1L, "AHORROS", new BigDecimal("100000.00"), "active", 5L);
     private static final BankDTO BANK = new BankDTO(1L, "Bancolombia", "The best");
 
     public AccountServiceTest() {
@@ -118,7 +118,7 @@ class AccountServiceTest {
                 Transaction.newBuilder()
                         .setId(1L)
                         .setType("DEPOSITO")
-                        .setAccountId(1L)
+                        .setAccountNumber(1L)
                         .setAmount(50000.00)
                         .setDescription("Test deposit")
                         .setTimestamp("2024-05-21T10:00:00")
@@ -132,7 +132,7 @@ class AccountServiceTest {
                 .expectNextMatches(transactionDTO ->
                         transactionDTO.getId() == 1L &&
                         transactionDTO.getType().equals("DEPOSITO") &&
-                        transactionDTO.getAccountId() == 1L &&
+                        transactionDTO.getAccountNumber() == 1L &&
                         transactionDTO.getAmount().equals(BigDecimal.valueOf(50000.00)) &&
                         transactionDTO.getDescription().equals("Test deposit"))
                 .verifyComplete();

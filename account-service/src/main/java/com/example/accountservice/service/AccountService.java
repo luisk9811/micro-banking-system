@@ -29,31 +29,32 @@ public class AccountService {
     }
 
     public Mono<Account> create(Account account) {
-        account.setId(null);
+        account.setAccountNumber(null);
         return getBankClient.getBank(account.getBankId())
                 .flatMap(bank -> accountRepository.save(account));
     }
 
     public Mono<Account> update(Account account) {
-        return getById(account.getId())
+        return getById(account.getAccountNumber())
                 .flatMap(existingAccount ->
                         getBankClient.getBank(account.getBankId())
                                 .flatMap(bank -> {
                                     existingAccount.setAccountNumber(account.getAccountNumber());
-                                    existingAccount.setBankId(account.getBankId());
                                     existingAccount.setAccountType(account.getAccountType());
                                     existingAccount.setBalance(account.getBalance());
                                     existingAccount.setStatus(account.getStatus());
+                                    existingAccount.setBankId(account.getBankId());
                                     return accountRepository.save(existingAccount);
                                 }));
     }
 
-    public Flux<TransactionDTO> getMovements(Long accountId) {
-        return Flux.fromIterable(transactionConsumer.getTransactions(accountId))
+    public Flux<TransactionDTO> getMovements(Long accountNumber) {
+        return Flux.fromIterable(transactionConsumer.getTransactions(accountNumber))
                 .map(transaction -> new TransactionDTO(
                         transaction.getId(),
                         transaction.getType(),
-                        transaction.getAccountId(),
+                        transaction.getAccountNumber(),
+                        transaction.getBankId(),
                         BigDecimal.valueOf(transaction.getAmount()),
                         transaction.getDescription(),
                         LocalDateTime.parse(transaction.getTimestamp())

@@ -19,6 +19,7 @@ class TransferServiceTest {
             null,
             "DEPOSITO",
             2L,
+            1L,
             new BigDecimal("100000.00"),
             "Transferencia interbancaria",
             null
@@ -26,11 +27,10 @@ class TransferServiceTest {
 
     private static final AccountDTO ACCOUNT = new AccountDTO(
             2L,
-            "ACC002",
-            99L,
             "AHORROS",
             new BigDecimal("50000.00"),
-            "active"
+            "active",
+            99L
     );
 
     public TransferServiceTest() {
@@ -42,12 +42,11 @@ class TransferServiceTest {
     void saveTransfer_ShouldUpdateAccountAndSaveTransaction() {
 
         AccountDTO updatedAccount = new AccountDTO(
-                ACCOUNT.getId(),
                 ACCOUNT.getAccountNumber(),
-                ACCOUNT.getBankId(),
                 ACCOUNT.getAccountType(),
                 ACCOUNT.getBalance().add(TRANSACTION.getAmount()),
-                ACCOUNT.getStatus()
+                ACCOUNT.getStatus(),
+                ACCOUNT.getBankId()
         );
 
         Mockito.when(restWebClient.getAccount(Mockito.anyLong()))

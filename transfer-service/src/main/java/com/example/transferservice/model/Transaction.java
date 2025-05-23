@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 public class Transaction {
   private Long id;
   private String type;
-  private Long accountId;
+  private Long accountNumber;
+  private Long bankId;
   private BigDecimal amount;
   private String description;
   private LocalDateTime timestamp;
